@@ -125,8 +125,6 @@ Visit: `http://localhost:4200`
 ### ➕ Add New Product
 ![Add Product](assets/add-product.png)
 
-> 💡 Save your screenshots in an `assets/` folder at the root level of your project for these links to work correctly on GitHub.
-
 ## 📃 License
 
 This project is open-source. Feel free to use and modify under the [MIT License](LICENSE).
