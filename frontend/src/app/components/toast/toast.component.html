@@ -1,0 +1,22 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+  <div *ngFor="let toast of toasts; trackBy: trackByToastId" 
+       [class]="getToastClass(toast.type)"
+       role="alert" 
+       aria-live="assertive" 
+       aria-atomic="true">
+    
+    <div class="toast-header" [class]="getToastHeaderClass(toast.type)">
+      <i [attr.data-feather]="getToastIcon(toast.type)" appFeatherIcon class="toast-icon me-2"></i>
+      <strong class="me-auto">{{ toast.title }}</strong>
+      <small class="text-muted">just now</small>
+      <button type="button" 
+              class="btn-close" 
+              (click)="removeToast(toast.id)"
+              aria-label="Close"></button>
+    </div>
+    
+    <div class="toast-body">
+      {{ toast.message }}
+    </div>
+  </div>
+</div>

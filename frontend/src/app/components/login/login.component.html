@@ -1,0 +1,150 @@
+<div class="login-container">
+  <div class="login-background">
+    <!-- Background image with overlay -->
+    <div class="background-overlay"></div>
+    <img src="https://pixabay.com/get/g9c047abe7a625452dfe4b77bca5ce619efe4ce03632c1de2da16edc206e5edfbbf012ddadfa7fb419355f33e48d1bbe526d17123e5754c3e16907ca3a6743b5a_1280.jpg" 
+         alt="Warehouse Background" class="background-image">
+  </div>
+  
+  <div class="login-content">
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <!-- Left side - Branding and Info -->
+        <div class="col-lg-7 d-none d-lg-flex login-info-section">
+          <div class="info-content">
+            <div class="brand-section">
+              <h1 class="display-4 fw-bold text-white mb-4">
+                <i data-feather="package" appFeatherIcon class="me-3"></i>
+                Smart Inventory
+              </h1>
+              <p class="lead text-white-50 mb-5">
+                Manage your inventory with real-time tracking, automated alerts, and comprehensive analytics.
+              </p>
+            </div>
+            
+            <div class="features-grid">
+              <div class="feature-item">
+                <div class="feature-icon">
+                  <i data-feather="trending-up" appFeatherIcon class="text-white"></i>
+                </div>
+                <div class="feature-text">
+                  <h5 class="text-white mb-1">Real-time Analytics</h5>
+                  <p class="text-white-50 small mb-0">Track inventory levels and usage patterns</p>
+                </div>
+              </div>
+              
+              <div class="feature-item">
+                <div class="feature-icon">
+                  <i data-feather="bell" appFeatherIcon class="text-white"></i>
+                </div>
+                <div class="feature-text">
+                  <h5 class="text-white mb-1">Smart Alerts</h5>
+                  <p class="text-white-50 small mb-0">Get notified when stock runs low</p>
+                </div>
+              </div>
+              
+              <div class="feature-item">
+                <div class="feature-icon">
+                  <i data-feather="shield" appFeatherIcon class="text-white"></i>
+                </div>
+                <div class="feature-text">
+                  <h5 class="text-white mb-1">Secure Access</h5>
+                  <p class="text-white-50 small mb-0">Role-based permissions and JWT security</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right side - Login Form -->
+        <div class="col-lg-5 login-form-section">
+          <div class="login-form-container">
+            <div class="text-center mb-5">
+              <h2 class="fw-bold text-dark mb-2">Welcome Back</h2>
+              <p class="text-muted">Sign in to access your inventory dashboard</p>
+            </div>
+            
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+              <!-- Username Field -->
+              <div class="mb-4">
+                <label for="username" class="form-label fw-medium">Username</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0">
+                    <i data-feather="user" appFeatherIcon class="icon-sm"></i>
+                  </span>
+                  <input 
+                    type="text" 
+                    id="username"
+                    class="form-control border-start-0 ps-0"
+                    [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+                    formControlName="username"
+                    placeholder="Enter your username"
+                    autocomplete="username">
+                </div>
+                <div class="invalid-feedback" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+                  {{ getErrorMessage('username') }}
+                </div>
+              </div>
+              
+              <!-- Password Field -->
+              <div class="mb-4">
+                <label for="password" class="form-label fw-medium">Password</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0">
+                    <i data-feather="lock" appFeatherIcon class="icon-sm"></i>
+                  </span>
+                  <input 
+                    [type]="showPassword ? 'text' : 'password'"
+                    id="password"
+                    class="form-control border-start-0 border-end-0 ps-0"
+                    [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                    formControlName="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password">
+                  <button 
+                    type="button"
+                    class="btn btn-outline-secondary border-start-0"
+                    (click)="togglePasswordVisibility()">
+                    <i [attr.data-feather]="showPassword ? 'eye-off' : 'eye'" appFeatherIcon class="icon-sm"></i>
+                  </button>
+                </div>
+                <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                  {{ getErrorMessage('password') }}
+                </div>
+              </div>
+              
+              <!-- Demo Credentials Info -->
+              <div class="alert alert-info" role="alert">
+                <h6 class="alert-heading mb-2">
+                  <i data-feather="info" appFeatherIcon class="icon-sm me-2"></i>Demo Credentials
+                </h6>
+                <div class="row">
+                  <div class="col-6">
+                    <strong>Admin:</strong><br>
+                    <small>admin / admin123</small>
+                  </div>
+                  <div class="col-6">
+                    <strong>Viewer:</strong><br>
+                    <small>viewer / viewer123</small>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Submit Button -->
+              <div class="d-grid">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary btn-lg"
+                  [disabled]="loading || loginForm.invalid">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <i *ngIf="!loading" data-feather="log-in" appFeatherIcon class="icon-sm me-2"></i>
+                  {{ loading ? 'Signing In...' : 'Sign In' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

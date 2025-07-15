@@ -1,0 +1,12 @@
+<div class="app-container">
+  <!-- Navigation Bar -->
+  <app-navbar *ngIf="isLoggedIn()"></app-navbar>
+  
+  <!-- Main Content -->
+  <main class="main-content" [class.with-navbar]="isLoggedIn()">
+    <router-outlet></router-outlet>
+  </main>
+  
+  <!-- Toast Container -->
+  <app-toast></app-toast>
+</div>

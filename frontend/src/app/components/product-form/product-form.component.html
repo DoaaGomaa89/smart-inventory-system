@@ -1,0 +1,307 @@
+<div class="product-form-container">
+  <!-- Header -->
+  <div class="container-fluid px-4 py-3">
+    <div class="row align-items-center">
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-2">
+            <li class="breadcrumb-item">
+              <a routerLink="/products" class="text-decoration-none">Products</a>
+            </li>
+            <li class="breadcrumb-item active">{{ isEditMode ? 'Edit Product' : 'Add Product' }}</li>
+          </ol>
+        </nav>
+        <h1 class="h3 mb-0 text-gray-800">
+          <i [attr.data-feather]="isEditMode ? 'edit-2' : 'plus'" appFeatherIcon class="me-2"></i>
+          {{ isEditMode ? 'Edit Product' : 'Add New Product' }}
+        </h1>
+        <p class="text-muted mb-0">{{ isEditMode ? 'Update product information and inventory details' : 'Create a new product entry for your inventory' }}</p>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-outline-secondary" (click)="onCancel()">
+          <i data-feather="arrow-left" appFeatherIcon class="me-1"></i>
+          Back to Products
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading product details...</p>
+  </div>
+
+  <!-- Product Form -->
+  <div *ngIf="!loading" class="container-fluid px-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow">
+          <div class="card-header py-3">
+            <h6 class="m-0 fw-bold text-primary">
+              <i data-feather="package" appFeatherIcon class="me-2"></i>
+              Product Information
+            </h6>
+          </div>
+          
+          <div class="card-body">
+            <form [formGroup]="productForm" (ngSubmit)="onSubmit()" novalidate>
+              <!-- Product Name -->
+              <div class="row mb-4">
+                <div class="col-md-12">
+                  <label for="name" class="form-label fw-medium">
+                    Product Name <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i data-feather="tag" appFeatherIcon></i>
+                    </span>
+                    <input 
+                      type="text" 
+                      id="name"
+                      class="form-control"
+                      [class.is-invalid]="isFieldInvalid('name')"
+                      [class.is-valid]="isFieldValid('name')"
+                      formControlName="name"
+                      placeholder="Enter product name"
+                      maxlength="100">
+                  </div>
+                  <div class="invalid-feedback" *ngIf="isFieldInvalid('name')">
+                    {{ getErrorMessage('name') }}
+                  </div>
+                  <div class="form-text">
+                    Choose a clear, descriptive name for your product
+                  </div>
+                </div>
+              </div>
+
+              <!-- Category -->
+              <div class="row mb-4">
+                <div class="col-md-12">
+                  <label for="category" class="form-label fw-medium">
+                    Category <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i data-feather="folder" appFeatherIcon></i>
+                    </span>
+                    <input 
+                      type="text" 
+                      id="category"
+                      class="form-control"
+                      [class.is-invalid]="isFieldInvalid('category')"
+                      [class.is-valid]="isFieldValid('category')"
+                      formControlName="category"
+                      placeholder="Enter or select category"
+                      list="categories"
+                      maxlength="50"
+                      (blur)="addCustomCategory($event)">
+                    <datalist id="categories">
+                      <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+                    </datalist>
+                  </div>
+                  <div class="invalid-feedback" *ngIf="isFieldInvalid('category')">
+                    {{ getErrorMessage('category') }}
+                  </div>
+                  
+                  <!-- Category Suggestions -->
+                  <div class="mt-2" *ngIf="categories.length > 0">
+                    <small class="text-muted">Quick select:</small>
+                    <div class="category-tags mt-1">
+                      <button 
+                        *ngFor="let category of categories.slice(0, 8)" 
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary me-1 mb-1"
+                        (click)="onCategorySelect(category)">
+                        {{ category }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quantity and Threshold -->
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <label for="quantity" class="form-label fw-medium">
+                    Current Quantity <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i data-feather="hash" appFeatherIcon></i>
+                    </span>
+                    <input 
+                      type="number" 
+                      id="quantity"
+                      class="form-control"
+                      [class.is-invalid]="isFieldInvalid('quantity')"
+                      [class.is-valid]="isFieldValid('quantity')"
+                      formControlName="quantity"
+                      placeholder="0"
+                      min="0"
+                      max="999999">
+                  </div>
+                  <div class="invalid-feedback" *ngIf="isFieldInvalid('quantity')">
+                    {{ getErrorMessage('quantity') }}
+                  </div>
+                  <div class="form-text">
+                    Enter the current stock quantity
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <label for="threshold" class="form-label fw-medium">
+                    Low Stock Threshold <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i data-feather="alert-triangle" appFeatherIcon></i>
+                    </span>
+                    <input 
+                      type="number" 
+                      id="threshold"
+                      class="form-control"
+                      [class.is-invalid]="isFieldInvalid('threshold')"
+                      [class.is-valid]="isFieldValid('threshold')"
+                      formControlName="threshold"
+                      placeholder="1"
+                      min="1"
+                      max="999999">
+                  </div>
+                  <div class="invalid-feedback" *ngIf="isFieldInvalid('threshold')">
+                    {{ getErrorMessage('threshold') }}
+                  </div>
+                  <div class="form-text">
+                    Alert when stock falls below this number
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="price" class="form-label fw-medium">
+                    Price <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i data-feather="dollar-sign" appFeatherIcon></i>
+                    </span>
+                    <input 
+                      type="number"
+                      id="price"
+                      class="form-control"
+                      formControlName="price"
+                      min="0"
+                      step="0.01"
+                      [class.is-invalid]="isFieldInvalid('price')"
+                      [class.is-valid]="isFieldValid('price')"
+                      placeholder="0.00">
+                  </div>
+                  <div class="invalid-feedback" *ngIf="isFieldInvalid('price')">
+                    {{ getErrorMessage('price') }}
+                  </div>
+                  <div class="form-text">
+                    Unit price of the product
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stock Status Preview -->
+              <div class="row mb-4" *ngIf="productForm.value.quantity !== null && productForm.value.threshold !== null">
+                <div class="col-12">
+                  <div class="alert alert-light border">
+                    <h6 class="alert-heading mb-2">
+                      <i data-feather="info" appFeatherIcon class="me-2"></i>
+                      Stock Status Preview
+                    </h6>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <strong>Current Stock:</strong> {{ productForm.value.quantity || 0 }}
+                      </div>
+                      <div class="col-md-4">
+                        <strong>Threshold:</strong> {{ productForm.value.threshold || 0 }}
+                      </div>
+                      <div class="col-md-4">
+                        <strong>Status:</strong> 
+                        <span [class]="getStockPreviewClass()" class="fw-bold ms-1">
+                          {{ getStockPreview() }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="row">
+                <div class="col-12">
+                  <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-outline-secondary" (click)="onCancel()" [disabled]="submitting">
+                      <i data-feather="x" appFeatherIcon class="me-1"></i>
+                      Cancel
+                    </button>
+                    <button type="submit" 
+                            class="btn btn-primary" 
+                            [disabled]="productForm.invalid || submitting">
+                      <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                      <i *ngIf="!submitting" [attr.data-feather]="isEditMode ? 'save' : 'plus'" appFeatherIcon class="me-1"></i>
+                      {{ submitting ? 'Saving...' : (isEditMode ? 'Update Product' : 'Create Product') }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Help Card -->
+        <div class="card shadow mt-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 fw-bold text-info">
+              <i data-feather="help-circle" appFeatherIcon class="me-2"></i>
+              Tips & Guidelines
+            </h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="fw-bold mb-2">Product Name</h6>
+                <ul class="small text-muted">
+                  <li>Use clear, descriptive names</li>
+                  <li>Include brand or model if applicable</li>
+                  <li>Keep it concise but informative</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="fw-bold mb-2">Category</h6>
+                <ul class="small text-muted">
+                  <li>Choose existing categories when possible</li>
+                  <li>Create new categories as needed</li>
+                  <li>Use consistent naming conventions</li>
+                </ul>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <h6 class="fw-bold mb-2">Quantity</h6>
+                <ul class="small text-muted">
+                  <li>Enter current actual stock count</li>
+                  <li>Use 0 for out-of-stock items</li>
+                  <li>Update regularly for accuracy</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="fw-bold mb-2">Threshold</h6>
+                <ul class="small text-muted">
+                  <li>Set based on reorder lead time</li>
+                  <li>Consider usage patterns</li>
+                  <li>Adjust for critical vs. non-critical items</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

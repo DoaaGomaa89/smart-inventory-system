@@ -1,0 +1,133 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+  <div class="container-fluid">
+    <!-- Brand -->
+    <a class="navbar-brand" routerLink="/dashboard">
+      <i data-feather="package" appFeatherIcon class="me-2"></i>
+      <span class="fw-bold">Smart Inventory</span>
+    </a>
+
+    <!-- Mobile toggle button -->
+    <button 
+      class="navbar-toggler border-0" 
+      type="button" 
+      (click)="toggleNavbar()"
+      [attr.aria-expanded]="!isCollapsed">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navigation items -->
+    <div class="navbar-collapse" [class.collapse]="isCollapsed">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- Dashboard -->
+        <li class="nav-item">
+          <a class="nav-link" 
+             routerLink="/dashboard" 
+             [class.active]="isActiveRoute('/dashboard')"
+             (click)="closeNavbar()">
+            <i data-feather="trending-up" appFeatherIcon class="me-1"></i>
+            Dashboard
+          </a>
+        </li>
+
+        <!-- Products -->
+        <li class="nav-item">
+          <a class="nav-link" 
+             routerLink="/products" 
+             [class.active]="isActiveRoute('/products')"
+             (click)="closeNavbar()">
+            <i data-feather="box" appFeatherIcon class="me-1"></i>
+            Products
+          </a>
+        </li>
+
+        <!-- Admin only navigation -->
+        <li class="nav-item" *ngIf="authService.isAdmin()">
+          <a class="nav-link" 
+             routerLink="/products/new" 
+             [class.active]="isActiveRoute('/products/new')"
+             (click)="closeNavbar()">
+            <i data-feather="plus" appFeatherIcon class="me-1"></i>
+            Add Product
+          </a>
+        </li>
+      </ul>
+
+      <!-- User info and logout -->
+      <div class="navbar-nav">
+        <!-- User dropdown -->
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" 
+             href="#" 
+             id="navbarDropdown" 
+             role="button" 
+             data-bs-toggle="dropdown" 
+             aria-expanded="false">
+            <div class="user-avatar me-2">
+              <i data-feather="user" appFeatherIcon class="user-icon"></i>
+            </div>
+            <div class="user-info d-none d-lg-block">
+              <div class="user-name">{{ username }}</div>
+              <div class="user-role">
+                <span class="badge rounded-pill" [class]="getRoleBadgeClass()">
+                  {{ getRoleDisplayName() }}
+                </span>
+              </div>
+            </div>
+          </a>
+          
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li>
+              <div class="dropdown-item-text">
+                <div class="d-flex align-items-center">
+                  <div class="user-avatar me-3">
+                    <i data-feather="user" appFeatherIcon class="user-icon"></i>
+                  </div>
+                  <div>
+                    <div class="fw-bold">{{ username }}</div>
+                    <div class="text-muted small">{{ getRoleDisplayName() }}</div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            
+            <!-- Quick Links -->
+            <li>
+              <a class="dropdown-item" routerLink="/dashboard" (click)="closeNavbar()">
+                <i data-feather="trending-up" appFeatherIcon class="me-2"></i>
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/products" (click)="closeNavbar()">
+                <i data-feather="box" appFeatherIcon class="me-2"></i>
+                Products
+              </a>
+            </li>
+            <li *ngIf="authService.isAdmin()">
+              <a class="dropdown-item" routerLink="/products/new" (click)="closeNavbar()">
+                <i data-feather="plus" appFeatherIcon class="me-2"></i>
+                Add Product
+              </a>
+            </li>
+            
+            <li><hr class="dropdown-divider"></li>
+            
+            <!-- Logout -->
+            <li>
+              <button class="dropdown-item text-danger" (click)="logout()">
+                <i data-feather="log-out" appFeatherIcon class="me-2"></i>
+                Sign Out
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile overlay -->
+<div class="mobile-overlay" 
+     [class.show]="!isCollapsed" 
+     (click)="closeNavbar()"></div>

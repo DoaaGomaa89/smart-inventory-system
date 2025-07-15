@@ -1,0 +1,39 @@
+# ==========================
+# Global Ignore
+# ==========================
+.DS_Store
+Thumbs.db
+
+# ==========================
+# Node (Frontend)
+# ==========================
+node_modules/
+dist/
+.angular/
+.env
+
+# Angular CLI build artifacts
+coverage/
+.tmp/
+
+# ==========================
+# Java (Backend)
+# ==========================
+target/
+*.log
+*.class
+
+# IDE files
+.classpath
+.project
+.settings/
+.metadata/
+
+# ==========================
+# OS & Misc
+# ==========================
+*.swp
+*.swo
+*.bak
+*.orig
+*.tmp
