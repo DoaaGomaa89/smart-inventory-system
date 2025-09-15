@@ -1,0 +1,43 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: inv_db
+    environment:
+      MYSQL_DATABASE: inventory
+      MYSQL_ROOT_PASSWORD: password
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3310:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -ppassword || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.spring-root
+    container_name: inv_backend
+    environment:
+      MYSQL_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: inv_frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+
+volumes:
+  db_data:

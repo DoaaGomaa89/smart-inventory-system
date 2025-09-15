@@ -1,0 +1,16 @@
+# ===== Build stage (Java 17) =====
+FROM maven:3.9-eclipse-temurin-17 AS builder
+WORKDIR /app
+# if backend is in ./backend, keep these COPY lines; if pom is at root, adjust accordingly
+COPY backend/pom.xml ./pom.xml
+RUN --mount=type=cache,target=/root/.m2 mvn -B -q -DskipTests dependency:go-offline
+COPY backend/src ./src
+RUN --mount=type=cache,target=/root/.m2 mvn -B -q -DskipTests clean package
+
+# ===== Runtime stage (Java 17) =====
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+ARG JAR_FILE=target/*.jar
+COPY --from=builder /app/${JAR_FILE} /app/app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app/app.jar"]
