@@ -17,11 +17,11 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    //@Value("${jwt.secret}")
+    private String secret ="qF!9d7hT&2xC$YzA3pM@vWlK#rJ*eSgU";
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
+   // @Value("${jwt.expiration}")
+    private Long expiration = 86400000L;
 
     // Generate JWT token
     public String generateToken(UserDetails userDetails) {
