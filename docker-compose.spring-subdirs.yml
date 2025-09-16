@@ -22,7 +22,23 @@ services:
       dockerfile: Dockerfile.spring-subdir
     container_name: inv_backend
     environment:
-      MYSQL_HOST: db
+      # ---- DB connection for Spring ----
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/inventory?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+
+      # ---- JPA (optional but handy locally) ----
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      # ---- JWT (mapped to properties below) ----
+      JWT_SECRET: qF!9d7hT&2xC$YzA3pM@vWlK#rJ*eSgU
+      JWT_EXPIRATION: "3600000"
+
+      # ---- CORS (if you use it in a CORS bean) ----
+      # ALLOWED_ORIGINS: http://localhost:4200
+
+      # ---- Profile (use if you have application-prod.properties) ----
+      # SPRING_PROFILES_ACTIVE: prod
     depends_on:
       db:
         condition: service_healthy
