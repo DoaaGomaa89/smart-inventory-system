@@ -36,15 +36,18 @@ public class AuthService {
                     loginRequest.getPassword()
                 )
             );
-
+            System.out.println("Step 1 passed");
             // Load user details
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
+            System.out.println("Step 2 passed"+userDetails);
             User user = userRepository.findByUsername(loginRequest.getUsername())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
+            System.out.println("Step 3 passed"+user);
             // Generate JWT token
             String token = jwtUtil.generateToken(userDetails, user.getRole().name());
 
+            System.out.println("Step 4 passed"+token);
             return new LoginResponse(token, user.getUsername(), user.getRole().name());
 
         } catch (BadCredentialsException e) {

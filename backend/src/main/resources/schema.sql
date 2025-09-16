@@ -22,9 +22,6 @@ CREATE TABLE IF NOT EXISTS products (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Indexes for products
-CREATE INDEX IF NOT EXISTS idx_product_name ON products(name);
-CREATE INDEX IF NOT EXISTS idx_product_quantity ON products(quantity);
 
 -- ==========================================
 -- INVENTORY_LOGS TABLE
@@ -41,8 +38,6 @@ CREATE TABLE IF NOT EXISTS inventory_logs (
         ON DELETE CASCADE
 );
 
--- Indexes for inventory_logs
-CREATE INDEX IF NOT EXISTS idx_inventory_log_product ON inventory_logs(product_id);
-CREATE INDEX IF NOT EXISTS idx_inventory_log_timestamp ON inventory_logs(timestamp);
+
 
 

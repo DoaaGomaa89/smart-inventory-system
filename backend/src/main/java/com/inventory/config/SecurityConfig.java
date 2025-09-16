@@ -4,6 +4,7 @@ import com.inventory.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -63,23 +64,24 @@ public class SecurityConfig {
     
     // filterChain method with CORS support
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .cors(withDefaults())  // ✅ Enables CORS
-            .csrf().disable()
-            .authorizeHttpRequests(authz -> authz
-            	    .requestMatchers("/api/auth/**").permitAll()
-            	    .requestMatchers("/api/dashboard/**").hasAnyRole("ADMIN", "VIEWER")
-            	    .requestMatchers("/api/products/**").hasAnyRole("ADMIN", "VIEWER")
-            	    .anyRequest().authenticated()
-            )
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
-
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .cors(withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()            // CORS preflight
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()   // login
+                        .requestMatchers("/auth/**").permitAll()                       // (e.g. register)
+                        .requestMatchers("/dashboard/**").hasAnyRole("ADMIN", "VIEWER")
+                        .requestMatchers("/products/**").hasAnyRole("ADMIN", "VIEWER")
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
+
 
     // ✅ CORS config bean
     @Bean
